@@ -1,3 +1,4 @@
+import '@xyflow/react/dist/style.css'
 import type { Metadata } from 'next'
 import './globals.css'
 
@@ -11,8 +12,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className="antialiased">{children}</body>
+    <html lang="en" className="dark h-full w-full">
+      <body className="h-full w-full antialiased">{children}</body>
     </html>
   )
 }

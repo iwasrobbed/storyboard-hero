@@ -4,10 +4,20 @@ You are building "Storyboard Hero", a platform that helps you create storyboards
 
 Features:
 
-- Turn text into images
-- Explore other latent spaces similar to a given bit of text / image
-- Turn images into videos
+- Uses React Flow (@xyflow/react) as a canvas for creating text/images/etc that connect to other elements below
+- Has text nodes as the root node for each "frame" of the storyboard
+- Turn text from text nodes into images using a text-to-image model
+  - (Optional) Explore other latent spaces similar to a given bit of text / image
+- Turn images into videos using an image-to-video model
 - Composite videos together into a single storyboard video
+
+Terminology:
+
+- PanelElement: Refers to a single visual moment or still image within the storyboard, illustrating a key point in time. E.g. a text input node, an image node, etc. These should be concrete and specific.
+
+- Panel: A group of PanelElements that are connected to each other to form a single frame or panel of the storyboard.
+
+- Storyboard: A collection of related panels that together depict a continuous sequence of action or events.
 
 ## Icons
 
