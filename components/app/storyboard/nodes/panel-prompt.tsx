@@ -20,7 +20,7 @@ export function PanelPrompt({ data }: PanelPromptProps) {
   }
 
   return (
-    <div className="w-64 rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
+    <div className="w-64 rounded border bg-card p-4 text-card-foreground shadow-sm">
       <div className="mb-2 text-sm font-semibold">Prompt</div>
       <Textarea
         value={prompt}
@@ -32,7 +32,7 @@ export function PanelPrompt({ data }: PanelPromptProps) {
         type="source"
         position={Position.Bottom}
         id="bottom"
-        className="!bg-muted-foreground"
+        className="bg-foreground"
       />
     </div>
   )

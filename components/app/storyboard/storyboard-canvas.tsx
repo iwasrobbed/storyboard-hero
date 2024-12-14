@@ -15,11 +15,10 @@ import {
 import type { Connection, Edge } from '@xyflow/react'
 import { useCallback, useRef } from 'react'
 import { createPanel } from '@/lib/storyboards/create-panel'
-import type {
-  PanelImageNode,
-  PanelNode,
-  PanelPromptNode,
-} from '@/lib/storyboards/types'
+import { getImageNode } from '@/lib/storyboards/get-image-node'
+import { getPromptNode } from '@/lib/storyboards/get-prompt-node'
+import type { PanelNode } from '@/lib/storyboards/types'
+import { updatePromptNode } from '@/lib/storyboards/update-prompt-node'
 import { Button } from '@/components/ui/button'
 import { PanelContainer } from './nodes/panel-container'
 import { PanelImage } from './nodes/panel-image'
@@ -51,22 +50,14 @@ export function StoryboardCanvas() {
       xOffset,
       onPromptChange: (panelId, prompt) => {
         console.log('onPromptChange', panelId, prompt)
-        reactFlowInstance.current?.updateNode(
-          `prompt-${panelId}`,
-          (node) =>
-            ({
-              data: {
-                ...node.data,
-                prompt,
-              },
-            }) as PanelPromptNode,
-        )
+        updatePromptNode(reactFlowInstance.current, `prompt-${panelId}`, prompt)
       },
       onGenerateImage: async (panelId) => {
         console.log('onGenerateImage', panelId)
-        const promptNode = reactFlowInstance.current?.getNode(
+        const promptNode = getPromptNode(
+          reactFlowInstance.current,
           `prompt-${panelId}`,
-        ) as PanelPromptNode | undefined
+        )
 
         if (promptNode) {
           console.log('generate image', promptNode.data.prompt)
@@ -76,9 +67,10 @@ export function StoryboardCanvas() {
         }
       },
       onGenerateVideo: async (panelId) => {
-        const imageNode = reactFlowInstance.current?.getNode(
+        const imageNode = getImageNode(
+          reactFlowInstance.current,
           `image-${panelId}`,
-        ) as PanelImageNode | undefined
+        )
 
         if (imageNode) {
           console.log('generate video', panelId, imageNode.data.imageUrl)

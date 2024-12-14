@@ -13,9 +13,14 @@ type PanelContainerNodeProps = NodeProps & {
 
 export function PanelContainer({ data, children }: PanelContainerNodeProps) {
   return (
-    <div className="relative min-h-[700px] min-w-[300px] rounded-xl border-2 border-dashed border-muted-foreground/20 p-12 pt-16">
+    <div className="relative min-h-[700px] min-w-[300px] rounded border border-dashed border-muted-foreground/75 bg-background/25 p-12 pt-16">
       <div className="absolute -top-4 right-4 z-10">
-        <Button variant="destructive" size="sm" onClick={data.onDelete}>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="bg-background/75 text-foreground hover:bg-red-500"
+          onClick={data.onDelete}
+        >
           <Trash03 className="h-4 w-4" />
         </Button>
       </div>

@@ -18,16 +18,16 @@ export function PanelImage({ data }: PanelImageProps) {
   }, [data])
 
   return (
-    <div className="w-64 rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
+    <div className="w-64 rounded border bg-card p-4 text-card-foreground shadow-sm">
       <Handle
         type="target"
         position={Position.Top}
         id="top"
-        className="!bg-muted-foreground"
+        className="bg-foreground"
       />
 
       <div className="mb-2 text-sm font-semibold">Generated Image</div>
-      <div className="relative aspect-video w-full overflow-hidden rounded-md bg-muted">
+      <div className="relative aspect-video w-full overflow-hidden rounded bg-muted">
         {data.status === 'generating' ? (
           <div className="flex h-full items-center justify-center">
             <Loading02 className="h-6 w-6 animate-spin" />
@@ -56,7 +56,7 @@ export function PanelImage({ data }: PanelImageProps) {
         type="source"
         position={Position.Bottom}
         id="bottom"
-        className="!bg-muted-foreground"
+        className="bg-foreground"
       />
     </div>
   )
