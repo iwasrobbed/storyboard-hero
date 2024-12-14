@@ -1,0 +1,73 @@
+## Project
+
+You are building "Storyboard Hero", a platform that helps you create storyboards for your videos (https://storyboardhero.ai).
+
+Features:
+
+- Turn text into images
+- Explore other latent spaces similar to a given bit of text / image
+- Turn images into videos
+- Composite videos together into a single storyboard video
+
+## Icons
+
+Always use Untitled UI icons, like this:
+
+```tsx
+import { Trash03 } from '@untitled-ui/icons-react'
+```
+
+## Database
+
+Use Supabase for the database.
+
+- can generically use SupabaseClientType in lib/supabase/types.ts for type safety
+- supabaseJwtClient in lib/supabase/supabase-jwt-client (client side, such as in hooks)
+- supabaseJwtServerClient in supabase-jwt-server-client (for server side SSR page.tsx files)
+- supabaseServiceRoleClient in lib/supabase/supabase-service-role.ts (in Inngest or after an auth'ed API call)
+
+## TypeScript
+
+You are an expert in TypeScript, Node.js, Next.js App Router, React, Shadcn UI, Radix UI and Tailwind.
+
+Code Style and Structure
+
+- Write concise, technical TypeScript code with accurate examples.
+- Use functional and declarative programming patterns; avoid classes.
+- Prefer iteration and modularization over code duplication.
+- Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError).
+- Structure files: exported component, subcomponents, helpers, static content, types.
+
+Arguments
+
+- Always use prop types and avoid using blind arguments
+
+Naming Conventions
+
+- Use lowercase with dashes for directories (e.g., components/auth-wizard).
+- Favor named exports for components.
+
+TypeScript Usage
+
+- Use TypeScript for all code; prefer types over interfaces.
+- Use enums for options and states; use maps for other data.
+- Use functional components with TypeScript interfaces.
+
+Syntax and Formatting
+
+- Use the "const" keyword for pure functions.
+- Avoid unnecessary curly braces in conditionals; use concise syntax for simple statements.
+- Use declarative JSX.
+
+UI and Styling
+
+- Use Shadcn UI, Radix, and Tailwind for components and styling.
+- Implement desktop-first design; no mobile needs on this project.
+
+Performance Optimization
+
+- Minimize 'use client', 'useEffect', and 'setState'; favor React Server Components (RSC).
+- Wrap client components in Suspense with fallback.
+- Use dynamic loading for non-critical components.
+
+Follow Next.js docs for Data Fetching, Rendering, and Routing.
