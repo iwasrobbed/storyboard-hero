@@ -15,7 +15,6 @@ export function PanelPrompt({ data }: PanelPromptProps) {
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newPrompt = e.target.value
     setPrompt(newPrompt)
-    console.log('handlePromptChange', data.panelId, newPrompt)
     data.onPromptChange(data.panelId, newPrompt)
   }
 

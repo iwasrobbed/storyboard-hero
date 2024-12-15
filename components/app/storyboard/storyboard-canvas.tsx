@@ -16,22 +16,15 @@ import type { Connection, Edge } from '@xyflow/react'
 import { useCallback, useRef } from 'react'
 import { createPanel } from '@/lib/storyboards/create-panel'
 import { getImageNode } from '@/lib/storyboards/get-image-node'
+import { getNodeId } from '@/lib/storyboards/get-node-id'
 import { getPromptNode } from '@/lib/storyboards/get-prompt-node'
 import type { PanelNode } from '@/lib/storyboards/types'
+import { NodeType, PanelStatus } from '@/lib/storyboards/types'
+import { updateImageNode } from '@/lib/storyboards/update-image-node'
 import { updatePromptNode } from '@/lib/storyboards/update-prompt-node'
 import { Button } from '@/components/ui/button'
-import { PanelContainer } from './nodes/panel-container'
-import { PanelImage } from './nodes/panel-image'
-import { PanelPrompt } from './nodes/panel-prompt'
-import { PanelVideo } from './nodes/panel-video'
-import { useGeneratePanelImage } from '@/hooks/use-generate-panel-image'
-
-const nodeTypes = {
-  'panel-container': PanelContainer,
-  'panel-prompt': PanelPrompt,
-  'panel-image': PanelImage,
-  'panel-video': PanelVideo,
-}
+import { nodeTypes } from './nodes/types'
+import { useGenerateImage } from '@/hooks/use-generate-image'
 
 export function StoryboardCanvas() {
   const [nodes, setNodes, onNodesChange] = useNodesState<PanelNode>([])
@@ -40,7 +33,7 @@ export function StoryboardCanvas() {
     null,
   )
 
-  const { generateImage } = useGeneratePanelImage()
+  const { generateImage } = useGenerateImage()
 
   const createNewPanel = useCallback(() => {
     const panelCount = nodes.length / 4
@@ -49,28 +42,57 @@ export function StoryboardCanvas() {
     const { nodes: newNodes, edges: newEdges } = createPanel({
       xOffset,
       onPromptChange: (panelId, prompt) => {
-        console.log('onPromptChange', panelId, prompt)
-        updatePromptNode(reactFlowInstance.current, `prompt-${panelId}`, prompt)
+        updatePromptNode({
+          reactFlow: reactFlowInstance.current,
+          panelId,
+          prompt,
+        })
       },
       onGenerateImage: async (panelId) => {
-        console.log('onGenerateImage', panelId)
-        const promptNode = getPromptNode(
-          reactFlowInstance.current,
-          `prompt-${panelId}`,
-        )
+        const promptNode = getPromptNode({
+          reactFlow: reactFlowInstance.current,
+          panelId,
+        })
 
-        if (promptNode) {
-          console.log('generate image', promptNode.data.prompt)
-          await generateImage(promptNode.data.prompt)
-        } else {
+        if (!promptNode) {
           console.error('Prompt node not found for panel', panelId)
+          return
+        }
+
+        updateImageNode({
+          reactFlow: reactFlowInstance.current,
+          panelId,
+          updates: {
+            status: PanelStatus.GENERATING,
+          },
+        })
+        const { imageUrl, error } = await generateImage(promptNode.data.prompt)
+
+        if (error) {
+          updateImageNode({
+            reactFlow: reactFlowInstance.current,
+            panelId,
+            updates: {
+              status: PanelStatus.ERROR,
+              error: error.message,
+            },
+          })
+        } else if (imageUrl) {
+          updateImageNode({
+            reactFlow: reactFlowInstance.current,
+            panelId,
+            updates: {
+              status: PanelStatus.COMPLETE,
+              imageUrl,
+            },
+          })
         }
       },
       onGenerateVideo: async (panelId) => {
-        const imageNode = getImageNode(
-          reactFlowInstance.current,
-          `image-${panelId}`,
-        )
+        const imageNode = getImageNode({
+          reactFlow: reactFlowInstance.current,
+          panelId,
+        })
 
         if (imageNode) {
           console.log('generate video', panelId, imageNode.data.imageUrl)
@@ -126,7 +148,7 @@ export function StoryboardCanvas() {
         onInit={onInit}
         defaultViewport={{ x: 0, y: 0, zoom: 1 }}
         minZoom={0.1}
-        maxZoom={1.5}
+        maxZoom={10}
         fitView
         colorMode={'dark'}
       >

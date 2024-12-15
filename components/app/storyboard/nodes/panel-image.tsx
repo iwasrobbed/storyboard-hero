@@ -1,10 +1,10 @@
 'use client'
 
-import { Loading02, Play } from '@untitled-ui/icons-react'
+import { AlertCircle, Loading02, Play } from '@untitled-ui/icons-react'
 import { Handle, Position } from '@xyflow/react'
 import { useCallback } from 'react'
 import Image from 'next/image'
-import { PanelImageData } from '@/lib/storyboards/types'
+import { PanelImageData, PanelStatus } from '@/lib/storyboards/types'
 import { Button } from '@/components/ui/button'
 
 type PanelImageProps = {
@@ -13,7 +13,6 @@ type PanelImageProps = {
 
 export function PanelImage({ data }: PanelImageProps) {
   const handleGenerateImage = useCallback(() => {
-    console.log('generate image tapped', data.panelId)
     data.onGenerateImage(data.panelId)
   }, [data])
 
@@ -28,9 +27,19 @@ export function PanelImage({ data }: PanelImageProps) {
 
       <div className="mb-2 text-sm font-semibold">Generated Image</div>
       <div className="relative aspect-video w-full overflow-hidden rounded bg-muted">
-        {data.status === 'generating' ? (
+        {data.status === PanelStatus.GENERATING ? (
           <div className="flex h-full items-center justify-center">
             <Loading02 className="h-6 w-6 animate-spin" />
+          </div>
+        ) : data.status === PanelStatus.ERROR ? (
+          <div className="flex h-full flex-col items-center justify-center gap-2">
+            <AlertCircle className="h-6 w-6 text-destructive" />
+            <div className="text-center text-sm text-destructive">
+              {data.error || 'Failed to generate image'}
+            </div>
+            <Button size="sm" variant="outline" onClick={handleGenerateImage}>
+              Try Again
+            </Button>
           </div>
         ) : data.imageUrl ? (
           <Image

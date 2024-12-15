@@ -1,5 +1,7 @@
 import type { Edge } from '@xyflow/react'
 import { MarkerType } from '@xyflow/react'
+import { getEdgeId } from './get-edge-id'
+import { getNodeId } from './get-node-id'
 import type {
   PanelContainerNode,
   PanelImageNode,
@@ -10,6 +12,7 @@ import type {
   PanelPromptNode,
   PanelVideoNode,
 } from './types'
+import { EdgeType, NodeType, PanelStatus } from './types'
 import { v4 as uuidv4 } from 'uuid'
 
 type CreatePanelParams = {
@@ -33,8 +36,8 @@ export function createPanel({
   const panelId = uuidv4()
 
   const containerNode: PanelContainerNode = {
-    id: `panel-${panelId}`,
-    type: 'panel-container',
+    id: getNodeId({ type: NodeType.PANEL, panelId }),
+    type: NodeType.CONTAINER,
     position: { x: xOffset, y: 0 },
     draggable: true,
     deletable: false, // note: there's a button specifically for deleting the panel
@@ -45,8 +48,8 @@ export function createPanel({
   }
 
   const promptNode: PanelPromptNode = {
-    id: `prompt-${panelId}`,
-    type: 'panel-prompt',
+    id: getNodeId({ type: NodeType.PROMPT, panelId }),
+    type: NodeType.PROMPT,
     position: { x: 20, y: 50 },
     parentId: containerNode.id,
     draggable: false,
@@ -60,8 +63,8 @@ export function createPanel({
   }
 
   const imageNode: PanelImageNode = {
-    id: `image-${panelId}`,
-    type: 'panel-image',
+    id: getNodeId({ type: NodeType.IMAGE, panelId }),
+    type: NodeType.IMAGE,
     position: { x: 20, y: 250 },
     parentId: containerNode.id,
     draggable: false,
@@ -69,15 +72,15 @@ export function createPanel({
     extent: 'parent',
     data: {
       panelId,
-      status: 'idle',
+      status: PanelStatus.IDLE,
       imageUrl: undefined,
       onGenerateImage,
     },
   }
 
   const videoNode: PanelVideoNode = {
-    id: `video-${panelId}`,
-    type: 'panel-video',
+    id: getNodeId({ type: NodeType.VIDEO, panelId }),
+    type: NodeType.VIDEO,
     position: { x: 20, y: 475 },
     parentId: containerNode.id,
     draggable: false,
@@ -85,14 +88,14 @@ export function createPanel({
     extent: 'parent',
     data: {
       panelId,
-      status: 'idle',
+      status: PanelStatus.IDLE,
       videoUrl: undefined,
       onGenerateVideo,
     },
   }
 
   const promptToImageEdge: Edge = {
-    id: `prompt-to-image-${panelId}`,
+    id: getEdgeId({ type: EdgeType.PROMPT_TO_IMAGE, panelId }),
     deletable: false,
     source: promptNode.id,
     target: imageNode.id,
@@ -107,7 +110,7 @@ export function createPanel({
   }
 
   const imageToVideoEdge: Edge = {
-    id: `image-to-video-${panelId}`,
+    id: getEdgeId({ type: EdgeType.IMAGE_TO_VIDEO, panelId }),
     deletable: false,
     source: imageNode.id,
     target: videoNode.id,

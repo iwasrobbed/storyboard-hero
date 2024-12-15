@@ -1,29 +1,29 @@
 import type { ReactFlowInstance } from '@xyflow/react'
 import type { Edge } from '@xyflow/react'
 import { getNodeId } from './get-node-id'
-import type { PanelNode, PanelPromptNode } from './types'
+import type { PanelImageNode, PanelNode } from './types'
 import { NodeType } from './types'
 
-type UpdatePromptNodeProps = {
+type UpdateImageNodeProps = {
   reactFlow: ReactFlowInstance<PanelNode, Edge> | null
   panelId: string
-  prompt: string
+  updates: Partial<PanelImageNode['data']>
 }
 
-export const updatePromptNode = ({
+export const updateImageNode = ({
   reactFlow,
   panelId,
-  prompt,
-}: UpdatePromptNodeProps): void => {
+  updates,
+}: UpdateImageNodeProps): void => {
   reactFlow?.updateNode(
-    getNodeId({ type: NodeType.PROMPT, panelId }),
+    getNodeId({ type: NodeType.IMAGE, panelId }),
     (node) =>
       ({
         ...node,
         data: {
           ...node.data,
-          prompt,
+          ...updates,
         },
-      }) as PanelPromptNode,
+      }) as PanelImageNode,
   )
 }

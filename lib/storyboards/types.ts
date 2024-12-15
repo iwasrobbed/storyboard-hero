@@ -1,6 +1,24 @@
 import type { Node as FlowNode } from '@xyflow/react'
 
-export type PanelStatus = 'idle' | 'generating' | 'complete' | 'error'
+export enum NodeType {
+  PANEL = 'panel',
+  CONTAINER = 'panel-container',
+  PROMPT = 'panel-prompt',
+  IMAGE = 'panel-image',
+  VIDEO = 'panel-video',
+}
+
+export enum EdgeType {
+  PROMPT_TO_IMAGE = 'prompt-to-image',
+  IMAGE_TO_VIDEO = 'image-to-video',
+}
+
+export enum PanelStatus {
+  IDLE = 'idle',
+  GENERATING = 'generating',
+  COMPLETE = 'complete',
+  ERROR = 'error',
+}
 
 export type PanelOnPromptChange = (panelId: string, newPrompt: string) => void
 export type PanelOnGenerateImage = (panelId: string) => Promise<void>
@@ -19,8 +37,9 @@ export type PanelPromptData = {
 
 export type PanelImageData = {
   panelId: string
-  status: PanelStatus
   imageUrl?: string
+  status: PanelStatus
+  error?: string
   onGenerateImage: PanelOnGenerateImage
 }
 
@@ -44,13 +63,13 @@ export type PanelNode =
 
 export const isPanelContainerNode = (
   node: FlowNode,
-): node is PanelContainerNode => node.type === 'panel-container'
+): node is PanelContainerNode => node.type === NodeType.CONTAINER
 
 export const isPanelPromptNode = (node: FlowNode): node is PanelPromptNode =>
-  node.type === 'panel-prompt'
+  node.type === NodeType.PROMPT
 
 export const isPanelImageNode = (node: FlowNode): node is PanelImageNode =>
-  node.type === 'panel-image'
+  node.type === NodeType.IMAGE
 
 export const isPanelVideoNode = (node: FlowNode): node is PanelVideoNode =>
-  node.type === 'panel-video'
+  node.type === NodeType.VIDEO

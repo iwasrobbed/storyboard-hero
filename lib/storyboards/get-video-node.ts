@@ -1,12 +1,18 @@
 import type { ReactFlowInstance } from '@xyflow/react'
 import type { Edge } from '@xyflow/react'
+import { getNodeId } from './get-node-id'
 import type { PanelNode, PanelVideoNode } from './types'
-import { isPanelVideoNode } from './types'
+import { NodeType, isPanelVideoNode } from './types'
 
-export const getVideoNode = (
-  reactFlowInstance: ReactFlowInstance<PanelNode, Edge> | null,
-  nodeId: string,
-): PanelVideoNode | undefined => {
-  const node = reactFlowInstance?.getNode(nodeId)
+type GetVideoNodeProps = {
+  reactFlow: ReactFlowInstance<PanelNode, Edge> | null
+  panelId: string
+}
+
+export const getVideoNode = ({
+  reactFlow,
+  panelId,
+}: GetVideoNodeProps): PanelVideoNode | undefined => {
+  const node = reactFlow?.getNode(getNodeId({ type: NodeType.VIDEO, panelId }))
   return node && isPanelVideoNode(node) ? node : undefined
 }

@@ -3,7 +3,7 @@
 import { Loading02, Play } from '@untitled-ui/icons-react'
 import { Handle, Position } from '@xyflow/react'
 import { useCallback } from 'react'
-import { PanelVideoData } from '@/lib/storyboards/types'
+import { PanelStatus, PanelVideoData } from '@/lib/storyboards/types'
 import { Button } from '@/components/ui/button'
 
 type PanelVideoProps = {
@@ -26,7 +26,7 @@ export function PanelVideo({ data }: PanelVideoProps) {
 
       <div className="mb-2 text-sm font-semibold">Scene Video</div>
       <div className="relative aspect-video w-full overflow-hidden rounded bg-muted">
-        {data.status === 'generating' ? (
+        {data.status === PanelStatus.GENERATING ? (
           <div className="flex h-full items-center justify-center">
             <Loading02 className="h-6 w-6 animate-spin" />
           </div>
