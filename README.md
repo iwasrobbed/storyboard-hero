@@ -1,6 +1,15 @@
 # Storyboard Hero
 
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
+[![React Flow](https://img.shields.io/badge/React%20Flow-11.10-orange?style=flat&logo=react)](https://reactflow.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3-38B2AC?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+
 AI-powered storyboards to easily stitch together scenes for videos, built by [rob phillips](https://robphillips.me).
+
+![Storyboard Hero](https://github.com/user-attachments/assets/591e0b18-6fb3-4c8e-95eb-f1ee20c35e28)
 
 ## Prerequisites
 
