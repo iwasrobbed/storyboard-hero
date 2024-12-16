@@ -33,12 +33,18 @@ export function useStoryboardState() {
     if (!stored) return
 
     try {
+      const parsed = JSON.parse(stored)
+
+      if (!parsed.nodes?.length && !parsed.edges?.length) {
+        localStorage.removeItem(STORAGE_KEY) // Clean up empty state
+        return
+      }
+
       const { nodes, edges, viewport } = restoreFlowWithCallbacks({
         stored,
         reactFlowInstance,
-        setNodes,
-        setEdges,
         generateImage,
+        deletePanel,
       })
 
       setNodes(nodes)
@@ -49,8 +55,25 @@ export function useStoryboardState() {
       }
     } catch (err) {
       console.error('Failed to restore flow:', err)
+      localStorage.removeItem(STORAGE_KEY) // Clean up invalid state
     }
   }, [reactFlowInstance, setNodes, setEdges, generateImage])
+
+  const deletePanel = useCallback(
+    (panelId: string) => {
+      setNodes((nodes) => nodes.filter((n) => !n.id.includes(panelId)))
+      setEdges((edges) => edges.filter((e) => !e.id.includes(panelId)))
+      // Save flow after deletion
+      setTimeout(saveFlow, 0)
+    },
+    [setNodes, setEdges, saveFlow],
+  )
+
+  const clearStoryboard = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEY)
+    setNodes([])
+    setEdges([])
+  }, [setNodes, setEdges, reactFlowInstance])
 
   // Auto-save whenever nodes or edges change
   const handleNodesChange: typeof onNodesChange = (...args) => {
@@ -84,5 +107,7 @@ export function useStoryboardState() {
     onNodesChange: handleNodesChange,
     onEdgesChange: handleEdgesChange,
     restoreFlow,
+    clearStoryboard,
+    deletePanel,
   }
 }

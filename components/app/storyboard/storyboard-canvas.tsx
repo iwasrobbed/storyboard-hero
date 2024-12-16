@@ -1,6 +1,6 @@
 'use client'
 
-import { ImagePlus } from '@untitled-ui/icons-react'
+import { ImagePlus, Trash03 } from '@untitled-ui/icons-react'
 import {
   Background,
   Controls,
@@ -9,11 +9,14 @@ import {
   Panel as ReactFlowPanel,
 } from '@xyflow/react'
 import type { Connection } from '@xyflow/react'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { createPanel } from '@/lib/storyboards/create-panel'
+import { calculateNewPanelOffset } from '@/lib/storyboards/get-panel-nodes'
 import { Button } from '@/components/ui/button'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { nodeTypes } from './nodes/types'
 import { useGenerateImage } from '@/hooks/use-generate-image'
+import { usePanelViewport } from '@/hooks/use-panel-viewport'
 import { useStoryboardState } from '@/hooks/use-storyboard-state'
 
 export function StoryboardCanvas() {
@@ -26,25 +29,45 @@ export function StoryboardCanvas() {
     onEdgesChange,
     reactFlowInstance,
     onInit,
+    clearStoryboard: clearStoryboardAndState,
+    deletePanel,
   } = useStoryboardState()
 
   const { generateImage } = useGenerateImage()
+  const { centerPanelInViewport } = usePanelViewport({ reactFlowInstance })
+
+  const [showClearConfirm, setShowClearConfirm] = useState(false)
 
   const createNewPanel = useCallback(() => {
-    const panelCount = nodes.length / 4
-    const xOffset = panelCount * 400 + 50
+    const { x: xOffset, y: yOffset } = calculateNewPanelOffset({
+      reactFlow: reactFlowInstance,
+    })
 
     const { nodes: newNodes, edges: newEdges } = createPanel({
       xOffset,
+      yOffset,
       reactFlowInstance,
-      setNodes,
-      setEdges,
       generateImage,
+      deletePanel,
     })
 
     setNodes((nds) => [...nds, ...newNodes])
     setEdges((eds) => [...eds, ...newEdges])
-  }, [nodes, setNodes, setEdges, reactFlowInstance, generateImage])
+
+    centerPanelInViewport(xOffset, yOffset)
+  }, [
+    setNodes,
+    setEdges,
+    reactFlowInstance,
+    generateImage,
+    centerPanelInViewport,
+    deletePanel,
+  ])
+
+  const clearStoryboard = useCallback(() => {
+    clearStoryboardAndState()
+    centerPanelInViewport(0, 0)
+  }, [clearStoryboardAndState, centerPanelInViewport])
 
   const onConnect = useCallback(
     (params: Connection) => {
@@ -87,12 +110,25 @@ export function StoryboardCanvas() {
         <Background />
         <Controls />
         <ReactFlowPanel position="top-center">
-          <Button onClick={createNewPanel}>
-            <ImagePlus className="mr-2 h-4 w-4" />
-            Add Panel
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button onClick={createNewPanel}>
+              <ImagePlus className="mr-2 h-4 w-4" />
+              Add Panel
+            </Button>
+            <Button onClick={() => setShowClearConfirm(true)}>
+              <Trash03 className="mr-2 h-4 w-4" />
+              Clear
+            </Button>
+          </div>
         </ReactFlowPanel>
       </ReactFlow>
+      <ConfirmDialog
+        open={showClearConfirm}
+        onOpenChange={setShowClearConfirm}
+        onConfirm={clearStoryboard}
+        title="Clear Storyboard"
+        description="Are you sure you want to clear the entire storyboard? This action cannot be undone."
+      />
     </div>
   )
 }

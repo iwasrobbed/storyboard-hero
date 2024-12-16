@@ -10,46 +10,46 @@ import type {
   PanelNode,
   PanelPromptNode,
   PanelVideoNode,
-  SetEdgesFunction,
-  SetNodesFunction,
 } from './types'
 import { EdgeType, NodeType, PanelStatus } from './types'
 import { v4 as uuidv4 } from 'uuid'
 
-type CreatePanelParams = {
+type CreatePanelProps = {
   xOffset: number
+  yOffset: number
   reactFlowInstance: ReactFlowInstance<PanelNode, Edge> | null
-  setNodes: SetNodesFunction
-  setEdges: SetEdgesFunction
   generateImage: (prompt: string) => Promise<GenerateImageResponse>
+  deletePanel: (panelId: string) => void
 }
 
-export function createPanel({
+export const panelWidth = 300
+export const panelHeight = 1100
+
+export const createPanel = ({
   xOffset,
+  yOffset,
   reactFlowInstance,
-  setNodes,
-  setEdges,
   generateImage,
-}: CreatePanelParams) {
+  deletePanel,
+}: CreatePanelProps) => {
   const panelId = uuidv4()
   const callbacks = createPanelCallbacks({
     reactFlowInstance,
-    setNodes,
-    setEdges,
     generateImage,
+    deletePanel,
   })
 
   const containerNode: PanelContainerNode = {
     id: getNodeId({ type: NodeType.PANEL, panelId }),
     type: NodeType.CONTAINER,
-    position: { x: xOffset, y: 0 },
+    position: { x: xOffset, y: yOffset },
     draggable: true,
     deletable: false, // note: there's a button specifically for deleting the panel
     data: {
       panelId,
       onDelete: () => callbacks.onDelete(panelId),
     },
-    style: { width: 300, height: 1100 },
+    style: { width: panelWidth, height: panelHeight },
   }
 
   const promptNode: PanelPromptNode = {

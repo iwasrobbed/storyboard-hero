@@ -1,28 +1,21 @@
 import type { Edge, ReactFlowInstance } from '@xyflow/react'
 import { getImageNode } from './get-image-node'
 import { getPromptNode } from './get-prompt-node'
-import type {
-  GenerateImageResponse,
-  PanelNode,
-  SetEdgesFunction,
-  SetNodesFunction,
-} from './types'
+import type { GenerateImageResponse, PanelNode } from './types'
 import { PanelStatus } from './types'
 import { updateImageNode } from './update-image-node'
 import { updatePromptNode } from './update-prompt-node'
 
 type CreatePanelCallbacksParams = {
   reactFlowInstance: ReactFlowInstance<PanelNode, Edge> | null
-  setNodes: SetNodesFunction
-  setEdges: SetEdgesFunction
   generateImage: (prompt: string) => Promise<GenerateImageResponse>
+  deletePanel: (panelId: string) => void
 }
 
 export function createPanelCallbacks({
   reactFlowInstance,
-  setNodes,
-  setEdges,
   generateImage,
+  deletePanel,
 }: CreatePanelCallbacksParams) {
   return {
     onPromptChange: (panelId: string, prompt: string) => {
@@ -90,8 +83,7 @@ export function createPanelCallbacks({
     },
 
     onDelete: (panelId: string) => {
-      setNodes((nodes) => nodes.filter((n) => !n.id.includes(panelId)))
-      setEdges((edges) => edges.filter((e) => !e.id.includes(panelId)))
+      deletePanel(panelId)
     },
   }
 }

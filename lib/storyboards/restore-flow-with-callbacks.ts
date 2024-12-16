@@ -4,8 +4,6 @@ import type {
   GenerateImageResponse,
   PanelContainerData,
   PanelNode,
-  SetEdgesFunction,
-  SetNodesFunction,
 } from './types'
 import {
   isPanelContainerNode,
@@ -23,24 +21,21 @@ type StoredFlow = {
 type RestoreFlowParams = {
   stored: string
   reactFlowInstance: ReactFlowInstance<PanelNode, Edge> | null
-  setNodes: SetNodesFunction
-  setEdges: SetEdgesFunction
   generateImage: (prompt: string) => Promise<GenerateImageResponse>
+  deletePanel: (panelId: string) => void
 }
 
 export function restoreFlowWithCallbacks({
   stored,
   reactFlowInstance,
-  setNodes,
-  setEdges,
   generateImage,
+  deletePanel,
 }: RestoreFlowParams) {
   const flow: StoredFlow = JSON.parse(stored)
   const callbacks = createPanelCallbacks({
     reactFlowInstance,
-    setNodes,
-    setEdges,
     generateImage,
+    deletePanel,
   })
 
   const nodesWithCallbacks = flow.nodes.map((node): PanelNode => {

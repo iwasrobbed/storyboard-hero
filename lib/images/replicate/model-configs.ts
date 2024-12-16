@@ -2,6 +2,7 @@ import { ReplicateModel } from './models'
 import { generateSeed } from './support'
 
 type ModelConfig = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   defaultOptions: Record<string, any>
 }
 
