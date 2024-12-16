@@ -19,6 +19,7 @@ export async function POST(request: Request) {
       prompt,
       imageUrl,
       model: RunwayModel.GEN3A_TURBO,
+      folderId: 'storyboard-hero/videos',
     })
 
     return NextResponse.json({ video: result })

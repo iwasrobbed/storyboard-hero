@@ -1,3 +1,4 @@
+import { transferFileToR2 } from '../r2/transfer-file-to-r2'
 import {
   RunwayModel,
   VideoGenerationMetadata,
@@ -9,6 +10,7 @@ export type GenerateVideoOptions = {
   imageUrl: string
   prompt: string
   model?: RunwayModel
+  folderId: string
 }
 
 export type GenerateVideoResult = {
@@ -20,6 +22,7 @@ export async function generateVideo({
   imageUrl,
   prompt,
   model = RunwayModel.GEN3A_TURBO,
+  folderId,
 }: GenerateVideoOptions): Promise<GenerateVideoResult> {
   const apiKey = process.env.RUNWAYML_API_SECRET
   if (!apiKey) {
@@ -71,10 +74,17 @@ export async function generateVideo({
       throw new Error('No output URL in completed task')
     }
 
-    // The task.output should contain the video URL
-    console.log('task.output', task.output)
+    const outputUrl = Array.isArray(task.output) ? task.output[0] : task.output
+
+    // Transfer the video to R2
+    const { url: storedUrl } = await transferFileToR2({
+      sourceUrl: outputUrl,
+      fileExtension: 'mp4',
+      folderId,
+    })
+
     return {
-      url: Array.isArray(task.output) ? task.output[0] : task.output,
+      url: storedUrl,
       metadata: {
         source: VideoGenerationSource.Runway,
         model,

@@ -1,4 +1,4 @@
-import { transferImageToR2 } from '../r2/transfer-image-to-r2'
+import { transferFileToR2 } from '../r2/transfer-file-to-r2'
 import { generateReplicateImage } from './replicate/generate-replicate-image'
 import { ReplicateModel } from './replicate/models'
 import {
@@ -71,8 +71,8 @@ export async function generateImage(
       throw new Error(`Unsupported image generation source: ${source}`)
   }
 
-  const { url } = await transferImageToR2({
-    imageResult: result,
+  const { url } = await transferFileToR2({
+    sourceUrl: result.url,
     fileExtension: result.fileExtension,
     folderId: options.folderId,
   })

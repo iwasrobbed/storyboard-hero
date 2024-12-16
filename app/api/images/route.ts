@@ -18,7 +18,7 @@ export async function POST(request: Request) {
         source: ImageGenerationSource.Replicate,
         model: ReplicateModel.FLUX_1_1_PRO_ULTRA,
       },
-      folderId: '/storyboard-hero',
+      folderId: 'storyboard-hero/images',
     })
 
     return NextResponse.json({ image: result })
