@@ -14,6 +14,7 @@ export enum EdgeType {
 }
 
 export enum PanelStatus {
+  DISABLED = 'disabled',
   IDLE = 'idle',
   GENERATING = 'generating',
   COMPLETE = 'complete',
@@ -46,8 +47,9 @@ export type PanelImageData = {
 
 export type PanelVideoData = {
   panelId: string
-  status: PanelStatus
   videoUrl?: string
+  status: PanelStatus
+  error?: string
   onGenerateVideo: PanelOnGenerateVideo
 }
 
@@ -85,5 +87,10 @@ export type SetEdgesFunction = (
 
 export type GenerateImageResponse = {
   imageUrl: string | null
+  error: Error | null
+}
+
+export type GenerateVideoResponse = {
+  videoUrl: string | null
   error: Error | null
 }

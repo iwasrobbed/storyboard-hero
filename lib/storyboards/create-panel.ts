@@ -5,6 +5,7 @@ import { getEdgeId } from './get-edge-id'
 import { getNodeId } from './get-node-id'
 import type {
   GenerateImageResponse,
+  GenerateVideoResponse,
   PanelContainerNode,
   PanelImageNode,
   PanelNode,
@@ -19,6 +20,10 @@ type CreatePanelProps = {
   yOffset: number
   reactFlowInstance: ReactFlowInstance<PanelNode, Edge> | null
   generateImage: (prompt: string) => Promise<GenerateImageResponse>
+  generateVideo: (
+    prompt: string,
+    imageUrl: string,
+  ) => Promise<GenerateVideoResponse>
   deletePanel: (panelId: string) => void
 }
 
@@ -30,12 +35,14 @@ export const createPanel = ({
   yOffset,
   reactFlowInstance,
   generateImage,
+  generateVideo,
   deletePanel,
 }: CreatePanelProps) => {
   const panelId = uuidv4()
   const callbacks = createPanelCallbacks({
     reactFlowInstance,
     generateImage,
+    generateVideo,
     deletePanel,
   })
 
@@ -93,7 +100,7 @@ export const createPanel = ({
     extent: 'parent',
     data: {
       panelId,
-      status: PanelStatus.IDLE,
+      status: PanelStatus.DISABLED,
       videoUrl: undefined,
       onGenerateVideo: callbacks.onGenerateVideo,
     },

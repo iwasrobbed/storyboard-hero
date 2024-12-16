@@ -4,20 +4,32 @@ import type { Edge, OnInit, ReactFlowInstance } from '@xyflow/react'
 import { useEdgesState, useNodesState } from '@xyflow/react'
 import { useCallback, useEffect, useState } from 'react'
 import { restoreFlowWithCallbacks } from '@/lib/storyboards/restore-flow-with-callbacks'
-import type { PanelNode } from '@/lib/storyboards/types'
-import { useGenerateImage } from '@/hooks/use-generate-image'
+import type {
+  GenerateImageResponse,
+  GenerateVideoResponse,
+  PanelNode,
+} from '@/lib/storyboards/types'
 
 const STORAGE_KEY = 'storyboard-state'
 
-export function useStoryboardState() {
+type UseStoryboardStateProps = {
+  generateImage: (prompt: string) => Promise<GenerateImageResponse>
+  generateVideo: (
+    prompt: string,
+    imageUrl: string,
+  ) => Promise<GenerateVideoResponse>
+}
+
+export function useStoryboardState({
+  generateImage,
+  generateVideo,
+}: UseStoryboardStateProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<PanelNode>([])
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance<
     PanelNode,
     Edge
   > | null>(null)
-
-  const { generateImage } = useGenerateImage()
 
   // Save the current flow state to localStorage
   const saveFlow = useCallback(() => {
@@ -44,6 +56,7 @@ export function useStoryboardState() {
         stored,
         reactFlowInstance,
         generateImage,
+        generateVideo,
         deletePanel,
       })
 
@@ -57,7 +70,7 @@ export function useStoryboardState() {
       console.error('Failed to restore flow:', err)
       localStorage.removeItem(STORAGE_KEY) // Clean up invalid state
     }
-  }, [reactFlowInstance, setNodes, setEdges, generateImage])
+  }, [reactFlowInstance, setNodes, setEdges, generateImage, generateVideo])
 
   const deletePanel = useCallback(
     (panelId: string) => {

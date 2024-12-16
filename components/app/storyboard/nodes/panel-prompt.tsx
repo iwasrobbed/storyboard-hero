@@ -26,6 +26,8 @@ export function PanelPrompt({ data }: PanelPromptProps) {
         onChange={handleChange}
         placeholder="Enter your scene description..."
         className="min-h-[100px] text-xs"
+        // Allow text selection without panning the canvas
+        onMouseDownCapture={(event) => event.stopPropagation()}
       />
       <Handle
         type="source"

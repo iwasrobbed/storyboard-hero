@@ -16,10 +16,14 @@ import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { nodeTypes } from './nodes/types'
 import { useGenerateImage } from '@/hooks/use-generate-image'
+import { useGenerateVideo } from '@/hooks/use-generate-video'
 import { usePanelViewport } from '@/hooks/use-panel-viewport'
 import { useStoryboardState } from '@/hooks/use-storyboard-state'
 
 export function StoryboardCanvas() {
+  const { generateImage } = useGenerateImage()
+  const { generateVideo } = useGenerateVideo()
+
   const {
     nodes,
     edges,
@@ -31,9 +35,8 @@ export function StoryboardCanvas() {
     onInit,
     clearStoryboard: clearStoryboardAndState,
     deletePanel,
-  } = useStoryboardState()
+  } = useStoryboardState({ generateImage, generateVideo })
 
-  const { generateImage } = useGenerateImage()
   const { centerPanelInViewport } = usePanelViewport({ reactFlowInstance })
 
   const [showClearConfirm, setShowClearConfirm] = useState(false)
@@ -48,6 +51,7 @@ export function StoryboardCanvas() {
       yOffset,
       reactFlowInstance,
       generateImage,
+      generateVideo,
       deletePanel,
     })
 
@@ -60,6 +64,7 @@ export function StoryboardCanvas() {
     setEdges,
     reactFlowInstance,
     generateImage,
+    generateVideo,
     centerPanelInViewport,
     deletePanel,
   ])
@@ -73,7 +78,7 @@ export function StoryboardCanvas() {
     (params: Connection) => {
       setEdges((eds) => [
         ...eds,
-        // Connect panels to each other
+        // (Eventually) Connect panels to each other to serialize & composite the video
         {
           ...params,
           id: `${params.source}-${params.target}`,
@@ -104,6 +109,7 @@ export function StoryboardCanvas() {
         defaultViewport={{ x: 0, y: 0, zoom: 1 }}
         minZoom={0.1}
         maxZoom={10}
+        zoomOnDoubleClick={false}
         fitView
         colorMode={'dark'}
       >

@@ -2,6 +2,7 @@ import type { Edge, ReactFlowInstance, Viewport } from '@xyflow/react'
 import { createPanelCallbacks } from './create-panel-callbacks'
 import type {
   GenerateImageResponse,
+  GenerateVideoResponse,
   PanelContainerData,
   PanelNode,
 } from './types'
@@ -22,6 +23,10 @@ type RestoreFlowParams = {
   stored: string
   reactFlowInstance: ReactFlowInstance<PanelNode, Edge> | null
   generateImage: (prompt: string) => Promise<GenerateImageResponse>
+  generateVideo: (
+    prompt: string,
+    imageUrl: string,
+  ) => Promise<GenerateVideoResponse>
   deletePanel: (panelId: string) => void
 }
 
@@ -29,12 +34,14 @@ export function restoreFlowWithCallbacks({
   stored,
   reactFlowInstance,
   generateImage,
+  generateVideo,
   deletePanel,
 }: RestoreFlowParams) {
   const flow: StoredFlow = JSON.parse(stored)
   const callbacks = createPanelCallbacks({
     reactFlowInstance,
     generateImage,
+    generateVideo,
     deletePanel,
   })
 

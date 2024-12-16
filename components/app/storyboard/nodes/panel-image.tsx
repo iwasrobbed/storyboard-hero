@@ -1,6 +1,11 @@
 'use client'
 
-import { AlertCircle, Loading02, Play } from '@untitled-ui/icons-react'
+import {
+  AlertCircle,
+  Loading02,
+  Play,
+  RefreshCw01,
+} from '@untitled-ui/icons-react'
 import { Handle, Position } from '@xyflow/react'
 import { useCallback } from 'react'
 import Image from 'next/image'
@@ -25,7 +30,19 @@ export function PanelImage({ data }: PanelImageProps) {
         className="bg-foreground"
       />
 
-      <div className="mb-2 text-sm font-semibold">Panel image</div>
+      <div className="mb-2 flex items-center justify-between gap-2 text-sm font-semibold">
+        <div>Panel image</div>
+        {data.imageUrl && (
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={handleGenerateImage}
+            disabled={data.status === PanelStatus.GENERATING}
+          >
+            <RefreshCw01 className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
       <div className="relative aspect-video w-full overflow-hidden rounded bg-muted">
         {data.status === PanelStatus.GENERATING ? (
           <div className="flex h-full items-center justify-center">

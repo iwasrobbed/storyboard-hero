@@ -12,6 +12,19 @@ body {
   }
 }
 
+/* See https://github.com/xyflow/xyflow/issues/4156 */
+@layer components {
+  .react-flow__node:has(textarea:focus)::after {
+    content: '';
+    position: absolute;
+    width: 10000px;
+    height: 10000px;
+    top: -5000px;
+    left: -5000px;
+    cursor: text;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
