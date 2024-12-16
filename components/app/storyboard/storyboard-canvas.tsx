@@ -5,33 +5,28 @@ import {
   Background,
   Controls,
   MarkerType,
-  OnInit,
   ReactFlow,
-  ReactFlowInstance,
   Panel as ReactFlowPanel,
-  useEdgesState,
-  useNodesState,
 } from '@xyflow/react'
-import type { Connection, Edge } from '@xyflow/react'
-import { useCallback, useRef } from 'react'
+import type { Connection } from '@xyflow/react'
+import { useCallback } from 'react'
 import { createPanel } from '@/lib/storyboards/create-panel'
-import { getImageNode } from '@/lib/storyboards/get-image-node'
-import { getNodeId } from '@/lib/storyboards/get-node-id'
-import { getPromptNode } from '@/lib/storyboards/get-prompt-node'
-import type { PanelNode } from '@/lib/storyboards/types'
-import { NodeType, PanelStatus } from '@/lib/storyboards/types'
-import { updateImageNode } from '@/lib/storyboards/update-image-node'
-import { updatePromptNode } from '@/lib/storyboards/update-prompt-node'
 import { Button } from '@/components/ui/button'
 import { nodeTypes } from './nodes/types'
 import { useGenerateImage } from '@/hooks/use-generate-image'
+import { useStoryboardState } from '@/hooks/use-storyboard-state'
 
 export function StoryboardCanvas() {
-  const [nodes, setNodes, onNodesChange] = useNodesState<PanelNode>([])
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([])
-  const reactFlowInstance = useRef<ReactFlowInstance<PanelNode, Edge> | null>(
-    null,
-  )
+  const {
+    nodes,
+    edges,
+    setNodes,
+    setEdges,
+    onNodesChange,
+    onEdgesChange,
+    reactFlowInstance,
+    onInit,
+  } = useStoryboardState()
 
   const { generateImage } = useGenerateImage()
 
@@ -41,86 +36,27 @@ export function StoryboardCanvas() {
 
     const { nodes: newNodes, edges: newEdges } = createPanel({
       xOffset,
-      onPromptChange: (panelId, prompt) => {
-        updatePromptNode({
-          reactFlow: reactFlowInstance.current,
-          panelId,
-          prompt,
-        })
-      },
-      onGenerateImage: async (panelId) => {
-        const promptNode = getPromptNode({
-          reactFlow: reactFlowInstance.current,
-          panelId,
-        })
-
-        if (!promptNode) {
-          console.error('Prompt node not found for panel', panelId)
-          return
-        }
-
-        updateImageNode({
-          reactFlow: reactFlowInstance.current,
-          panelId,
-          updates: {
-            status: PanelStatus.GENERATING,
-          },
-        })
-        const { imageUrl, error } = await generateImage(promptNode.data.prompt)
-
-        if (error) {
-          updateImageNode({
-            reactFlow: reactFlowInstance.current,
-            panelId,
-            updates: {
-              status: PanelStatus.ERROR,
-              error: error.message,
-            },
-          })
-        } else if (imageUrl) {
-          updateImageNode({
-            reactFlow: reactFlowInstance.current,
-            panelId,
-            updates: {
-              status: PanelStatus.COMPLETE,
-              imageUrl,
-            },
-          })
-        }
-      },
-      onGenerateVideo: async (panelId) => {
-        const imageNode = getImageNode({
-          reactFlow: reactFlowInstance.current,
-          panelId,
-        })
-
-        if (imageNode) {
-          console.log('generate video', panelId, imageNode.data.imageUrl)
-        } else {
-          console.error('Image node not found for panel', panelId)
-        }
-        return Promise.resolve()
-      },
-      onDelete: (panelId) => {
-        setNodes((nodes) => nodes.filter((n) => !n.id.includes(panelId)))
-        setEdges((edges) => edges.filter((e) => !e.id.includes(panelId)))
-      },
+      reactFlowInstance,
+      setNodes,
+      setEdges,
+      generateImage,
     })
 
     setNodes((nds) => [...nds, ...newNodes])
     setEdges((eds) => [...eds, ...newEdges])
-  }, [generateImage, nodes, setNodes, setEdges])
+  }, [nodes, setNodes, setEdges, reactFlowInstance, generateImage])
 
   const onConnect = useCallback(
     (params: Connection) => {
       setEdges((eds) => [
         ...eds,
+        // Connect panels to each other
         {
           ...params,
           id: `${params.source}-${params.target}`,
           type: 'smoothstep',
-          sourceHandle: 'bottom',
-          targetHandle: 'top',
+          sourceHandle: 'right',
+          targetHandle: 'left',
           markerEnd: {
             type: MarkerType.Arrow,
             width: 20,
@@ -131,10 +67,6 @@ export function StoryboardCanvas() {
     },
     [setEdges],
   )
-
-  const onInit = useCallback<OnInit<PanelNode, Edge>>((instance) => {
-    reactFlowInstance.current = instance
-  }, [])
 
   return (
     <div className="h-full w-full">

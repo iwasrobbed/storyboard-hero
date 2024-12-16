@@ -24,7 +24,7 @@ export function PanelVideo({ data }: PanelVideoProps) {
         className="bg-foreground"
       />
 
-      <div className="mb-2 text-sm font-semibold">Scene Video</div>
+      <div className="mb-2 text-sm font-semibold">Panel video</div>
       <div className="relative aspect-video w-full overflow-hidden rounded bg-muted">
         {data.status === PanelStatus.GENERATING ? (
           <div className="flex h-full items-center justify-center">

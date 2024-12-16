@@ -1,4 +1,4 @@
-import type { Node as FlowNode } from '@xyflow/react'
+import type { Edge, Node as FlowNode } from '@xyflow/react'
 
 export enum NodeType {
   PANEL = 'panel',
@@ -25,6 +25,7 @@ export type PanelOnGenerateImage = (panelId: string) => Promise<void>
 export type PanelOnGenerateVideo = (panelId: string) => Promise<void>
 
 export type PanelContainerData = {
+  panelId: string
   onDelete: () => void
   children?: React.ReactNode
 }
@@ -73,3 +74,16 @@ export const isPanelImageNode = (node: FlowNode): node is PanelImageNode =>
 
 export const isPanelVideoNode = (node: FlowNode): node is PanelVideoNode =>
   node.type === NodeType.VIDEO
+
+export type SetNodesFunction = (
+  nodes: PanelNode[] | ((nodes: PanelNode[]) => PanelNode[]),
+) => void
+
+export type SetEdgesFunction = (
+  edges: Edge[] | ((edges: Edge[]) => Edge[]),
+) => void
+
+export type GenerateImageResponse = {
+  imageUrl: string | null
+  error: Error | null
+}

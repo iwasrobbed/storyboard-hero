@@ -1,39 +1,43 @@
-import type { Edge } from '@xyflow/react'
+import type { Edge, ReactFlowInstance } from '@xyflow/react'
 import { MarkerType } from '@xyflow/react'
+import { createPanelCallbacks } from './create-panel-callbacks'
 import { getEdgeId } from './get-edge-id'
 import { getNodeId } from './get-node-id'
 import type {
+  GenerateImageResponse,
   PanelContainerNode,
   PanelImageNode,
   PanelNode,
-  PanelOnGenerateImage,
-  PanelOnGenerateVideo,
-  PanelOnPromptChange,
   PanelPromptNode,
   PanelVideoNode,
+  SetEdgesFunction,
+  SetNodesFunction,
 } from './types'
 import { EdgeType, NodeType, PanelStatus } from './types'
 import { v4 as uuidv4 } from 'uuid'
 
 type CreatePanelParams = {
   xOffset: number
-  onDelete: (panelId: string) => void
-  onPromptChange: PanelOnPromptChange
-  onGenerateImage: PanelOnGenerateImage
-  onGenerateVideo: PanelOnGenerateVideo
+  reactFlowInstance: ReactFlowInstance<PanelNode, Edge> | null
+  setNodes: SetNodesFunction
+  setEdges: SetEdgesFunction
+  generateImage: (prompt: string) => Promise<GenerateImageResponse>
 }
 
 export function createPanel({
   xOffset,
-  onDelete,
-  onPromptChange,
-  onGenerateImage,
-  onGenerateVideo,
-}: CreatePanelParams): {
-  nodes: PanelNode[]
-  edges: Edge[]
-} {
+  reactFlowInstance,
+  setNodes,
+  setEdges,
+  generateImage,
+}: CreatePanelParams) {
   const panelId = uuidv4()
+  const callbacks = createPanelCallbacks({
+    reactFlowInstance,
+    setNodes,
+    setEdges,
+    generateImage,
+  })
 
   const containerNode: PanelContainerNode = {
     id: getNodeId({ type: NodeType.PANEL, panelId }),
@@ -42,7 +46,8 @@ export function createPanel({
     draggable: true,
     deletable: false, // note: there's a button specifically for deleting the panel
     data: {
-      onDelete: () => onDelete(panelId),
+      panelId,
+      onDelete: () => callbacks.onDelete(panelId),
     },
     style: { width: 300, height: 1100 },
   }
@@ -58,7 +63,7 @@ export function createPanel({
     data: {
       panelId,
       prompt: '',
-      onPromptChange,
+      onPromptChange: callbacks.onPromptChange,
     },
   }
 
@@ -74,7 +79,7 @@ export function createPanel({
       panelId,
       status: PanelStatus.IDLE,
       imageUrl: undefined,
-      onGenerateImage,
+      onGenerateImage: callbacks.onGenerateImage,
     },
   }
 
@@ -90,7 +95,7 @@ export function createPanel({
       panelId,
       status: PanelStatus.IDLE,
       videoUrl: undefined,
-      onGenerateVideo,
+      onGenerateVideo: callbacks.onGenerateVideo,
     },
   }
 

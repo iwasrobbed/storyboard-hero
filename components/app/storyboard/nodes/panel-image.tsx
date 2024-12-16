@@ -25,7 +25,7 @@ export function PanelImage({ data }: PanelImageProps) {
         className="bg-foreground"
       />
 
-      <div className="mb-2 text-sm font-semibold">Generated Image</div>
+      <div className="mb-2 text-sm font-semibold">Panel image</div>
       <div className="relative aspect-video w-full overflow-hidden rounded bg-muted">
         {data.status === PanelStatus.GENERATING ? (
           <div className="flex h-full items-center justify-center">
@@ -44,7 +44,7 @@ export function PanelImage({ data }: PanelImageProps) {
         ) : data.imageUrl ? (
           <Image
             src={data.imageUrl}
-            alt="Generated scene"
+            alt="Panel image"
             fill
             className="object-cover"
           />

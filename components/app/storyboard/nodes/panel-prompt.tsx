@@ -20,7 +20,7 @@ export function PanelPrompt({ data }: PanelPromptProps) {
 
   return (
     <div className="w-64 rounded border bg-card p-4 text-card-foreground shadow-sm">
-      <div className="mb-2 text-sm font-semibold">Prompt</div>
+      <div className="mb-2 text-sm font-semibold">Describe the scene</div>
       <Textarea
         value={prompt}
         onChange={handleChange}
