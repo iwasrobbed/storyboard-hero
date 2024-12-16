@@ -72,6 +72,26 @@ The app will be available at [http://localhost:3005](http://localhost:3005)
 - Use `bun run format` to format code with Prettier
 - Use `bun run lint` to run ESLint
 
+## Testing
+
+Create a `.env.test` file in the root directory with test credentials:
+
+```bash
+REPLICATE_API_KEY=test-replicate-key
+RUNWAYML_API_SECRET=test-runway-key
+CLOUDFLARE_R2_ACCESS_KEY_ID=test-r2-key
+CLOUDFLARE_R2_SECRET_ACCESS_KEY=test-r2-secret
+CLOUDFLARE_R2_ENDPOINT_URL=https://test.r2.cloudflarestorage.com
+CLOUDFLARE_R2_BUCKET_NAME=test-bucket
+CLOUDFLARE_R2_PUBLIC_URL=https://test.storyboardhero.co
+```
+
+Run tests with:
+
+```bash
+bun test
+```
+
 ## Project Structure
 
 ```
